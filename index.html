@@ -426,10 +426,16 @@ footer code { font-size: .9em; }
   main > .statement, main > .work { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
   .work { padding-bottom: 4px; }
   .work > * { flex: none; }
+  main { grid-template-columns: minmax(0, 1fr) 14px minmax(0, var(--work-w, 51.5%)); gap: 3px; }
+  .splitter { cursor: col-resize; position: relative; touch-action: none; align-self: stretch; }
+  .splitter::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 44px; border-radius: 4px; transform: translate(-50%, -50%); background: var(--line); transition: background .2s, height .2s; }
+  .splitter:hover::after, .splitter.drag::after, .splitter:focus-visible::after { background: var(--accent); height: 72px; }
+  body.resizing { cursor: col-resize; user-select: none; }
   .ed-body { height: calc((100dvh - var(--top, 80px)) * 0.56); min-height: 300px; }
 }
 @media (max-width: 1240px) {
   main { grid-template-columns: minmax(0, 1fr); }
+  .splitter { display: none; }
 }
 @media (max-width: 860px) {
   .shell { grid-template-columns: minmax(0, 1fr); gap: 14px; padding-top: 14px; }
@@ -499,6 +505,7 @@ footer code { font-size: .9em; }
     </details>
     <main>
       <article class="statement card" id="statement"></article>
+      <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code editor" title="Drag to resize · double-click to reset" tabindex="0"></div>
       <section class="work">
         <div class="editor">
           <div class="ed-bar">
@@ -7835,6 +7842,24 @@ PROBLEMS.forEach((p) => {
   }
   $("nav-toggle").addEventListener("click", () => setNav(!document.body.classList.contains("nav-off")));
   setNav(!!store.get("ps.navOff", false));
+
+  // ---------- resizable editor column (35%–70% of the width) ----------
+  const splitter = $("splitter"), mainEl = document.querySelector("main");
+  const setWork = (f) => { f = Math.min(0.7, Math.max(0.35, f)); document.documentElement.style.setProperty("--work-w", (f * 100).toFixed(2) + "%"); return f; };
+  let workF = setWork(+store.get("ps.workW", 0.515) || 0.515);
+  splitter.addEventListener("pointerdown", (e) => {
+    splitter.setPointerCapture(e.pointerId); splitter.classList.add("drag"); document.body.classList.add("resizing");
+    const r = mainEl.getBoundingClientRect();
+    const move = (ev) => { workF = setWork((r.right - ev.clientX) / r.width); };
+    const up = () => { splitter.removeEventListener("pointermove", move); splitter.classList.remove("drag"); document.body.classList.remove("resizing"); store.set("ps.workW", workF); };
+    splitter.addEventListener("pointermove", move);
+    splitter.addEventListener("pointerup", up, { once: true });
+  });
+  splitter.addEventListener("dblclick", () => { workF = setWork(0.515); store.set("ps.workW", workF); });
+  splitter.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault(); workF = setWork(workF + (e.key === "ArrowLeft" ? 0.02 : -0.02)); store.set("ps.workW", workF);
+  });
 
   // ---------- fixed-height panes: measure the top bar ----------
   const topbar = document.querySelector(".topbar");
