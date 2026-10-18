@@ -1,7 +1,6 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PixelSmith</title></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
 <title>PixelSmith</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -339,6 +338,26 @@ textarea#code::selection { background: #6CC2B640; }
 .lb .nm span { font-size: 12px; color: var(--muted); }
 .lb .pt { font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; }
 .lb .pt span { display: block; font-size: 11px; color: var(--muted); font-weight: 600; }
+.lb-tabs { display: inline-flex; gap: 2px; padding: 3px; margin-bottom: 14px; border-radius: 999px; background: var(--sunk); }
+.lb-tabs button { border: 0; background: none; padding: 7px 16px; border-radius: 999px; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.lb-tabs button[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: var(--shadow); }
+a.btn { display: inline-flex; color: inherit; text-decoration: none; }
+.ct { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel-2); margin-bottom: 6px; }
+.ct h3 { margin: 6px 0 4px; font-size: 18px; }
+.ct p { margin: 0 0 8px; font-size: 14px; }
+.ct-status { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.ct-status.live { color: var(--accent); }
+.ct-meta { color: var(--muted); }
+.ct-up { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.ct-up input { font: inherit; font-size: 13px; max-width: 100%; }
+.ct-msg, .join-msg { margin: 8px 0 0; font-size: 13px; color: var(--muted); min-height: 1em; }
+.join { padding: 14px 16px; border-radius: 14px; background: var(--accent-soft); margin: 4px 0 16px; }
+.join p { margin: 4px 0 10px; font-size: 13.5px; }
+.join details { margin-top: 10px; font-size: 13.5px; }
+.join summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.join-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.join-row input { flex: 1; min-width: 160px; font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+.code-box { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 12.5px; padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
 .lb-rules { margin-top: 16px; font-size: 13px; color: var(--muted); }
 .sync { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--panel); border: 1px solid var(--line); padding: 6px 11px; border-radius: 999px; }
 .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
@@ -367,6 +386,7 @@ textarea#code::selection { background: #6CC2B640; }
 .recent button { width: 100%; display: flex; gap: 10px; align-items: center; border: 0; background: none; padding: 8px 10px; border-radius: 10px; cursor: pointer; text-align: left; font-size: 14px; }
 .recent button:hover { background: var(--panel-2); }
 .recent span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent span.status-dot, .recent span.ddot { flex: none; }
 .recent em { font-style: normal; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .sync-note { margin: 20px 0 0; font-size: 13px; color: var(--muted); padding: 12px 14px; background: var(--panel-2); border-radius: 12px; border: 1px solid var(--line); }
 @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bar-row { grid-template-columns: 110px minmax(0, 1fr) 46px; } }
@@ -6980,11 +7000,10 @@ PROBLEMS.forEach((p) => {
   if (!solvedAt) { solvedAt = {}; store.get("ps.solved", []).forEach((id) => { solvedAt[id] = 0; }); }
   let attempts = store.get("ps.attempts", {});
   let activity = store.get("ps.activity", {});
-  let peeked = store.get("ps.peeked", {});
   const POINTS = { Easy: 10, Medium: 20, Hard: 40 };
   const dayKey = (t) => { const d = new Date(t); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
   const solved = { has: (id) => Object.prototype.hasOwnProperty.call(solvedAt, id), get size() { return Object.keys(solvedAt).length; } };
-  function saveLocal() { store.set("ps.solvedAt", solvedAt); store.set("ps.attempts", attempts); store.set("ps.activity", activity); store.set("ps.peeked", peeked); }
+  function saveLocal() { store.set("ps.solvedAt", solvedAt); store.set("ps.attempts", attempts); store.set("ps.activity", activity); }
   function scoreOf() {
     let sc = 0;
     PROBLEMS.forEach((p) => { if (solved.has(p.id)) sc += POINTS[p.diff]; });
@@ -6994,100 +7013,103 @@ PROBLEMS.forEach((p) => {
   function getDraft(id) { return { c: store.get("ps.code." + id, null), t: store.get("ps.codeT." + id, 0) }; }
   function setDraft(id, code, t) { store.set("ps.code." + id, code); store.set("ps.codeT." + id, t || Date.now()); scheduleDrafts(); }
 
-  const SYNC = { progRef: null, draftRef: null, on: false, chain: Promise.resolve(), pT: null, dT: null, db: null, user: null, uid: null, noRank: false, sT: null, lbUnsub: null, rows: [] };
-  function pushScore() {
-    if (!SYNC.db || !SYNC.uid || SYNC.noRank) return;
-    clearTimeout(SYNC.sT);
-    SYNC.sT = setTimeout(() => {
-      const by = (d) => PROBLEMS.filter((p) => p.diff === d && solved.has(p.id)).length;
-      SYNC.db.doc("scores/" + SYNC.uid).set({ score: scoreOf(), solved: solved.size, easy: by("Easy"), medium: by("Medium"), hard: by("Hard"), updatedAt: Date.now() })
-        .catch((e) => { if (e && e.code === "invalid_argument") SYNC.noRank = true; });
-    }, 900);
+  // ---------- server (Supabase) ----------
+  const API_URL = "https://ugzpbrfqkngizdclpuzz.supabase.co", API_KEY = "sb_publishable_IafdEuzOBctJFdhBTo6yzw_J5HF9EvE";
+  async function rpc(fn, args) {
+    let r;
+    try { r = await fetch(API_URL + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: API_KEY, "Content-Type": "application/json" }, body: JSON.stringify(args || {}) }); }
+    catch (e) { throw new Error("Couldn't reach the server. Check your connection."); }
+    const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+    if (!r.ok) throw new Error((j && j.message) || "Something went wrong on the server.");
+    return j;
   }
+  const SYNC = { player: store.get("ps.player", null), chain: Promise.resolve(), pT: null, dT: null, pulledAt: 0 };
+  const SYNCED_MSG = "Progress and drafts are saved to your player profile. Use your sync code to see them on another device.";
   function setSync(state, text, title) {
     const el = $("sync"); if (!el) return;
     el.dataset.state = state; $("sync-text").textContent = text; el.title = title || "";
   }
   function queueWrite(fn) {
-    SYNC.chain = SYNC.chain.then(fn).then(() => setSync("synced", "Synced", "Progress and drafts are saved to your claude.ai account and appear on every device where you open this page."))
-      .catch((e) => {
-        if (e && e.code === "invalid_argument") { SYNC.on = false; setSync("local", "This device", "Your account can't save to this page, so progress is kept in this browser only."); }
-        else setSync("error", "Not synced", "Couldn't reach the server. Progress is safe in this browser and will sync on your next change.");
-      });
+    SYNC.chain = SYNC.chain.then(fn).then(() => setSync("synced", "Synced", SYNCED_MSG))
+      .catch(() => setSync("error", "Not synced", "Couldn't reach the server. Progress is safe in this browser and will sync on your next change."));
   }
-  function progressDoc() { return { solvedAt, attempts, activity, peeked, last: current ? current.id : null, updatedAt: Date.now() }; }
-  function saveProgress() {
-    saveLocal();
-    pushScore();
-    if (!SYNC.on) return;
-    setSync("syncing", "Saving…");
-    clearTimeout(SYNC.pT);
-    SYNC.pT = setTimeout(() => queueWrite(() => SYNC.progRef.set(progressDoc())), 700);
-  }
+  const countBy = (d) => PROBLEMS.filter((p) => p.diff === d && solved.has(p.id)).length;
+  function progressDoc() { return { solvedAt, attempts, activity, last: current ? current.id : null, updatedAt: Date.now() }; }
+  const pushProgress = () => rpc("save_progress", { p_secret: SYNC.player.secret, p_progress: progressDoc(), p_easy: countBy("Easy"), p_medium: countBy("Medium"), p_hard: countBy("Hard") });
   function draftsDoc() {
     const code = {};
     PROBLEMS.forEach((p) => { const d = getDraft(p.id); if (d.c !== null && d.c !== p.starter) code[p.id] = { c: d.c.slice(0, 8000), t: d.t }; });
     return { code, updatedAt: Date.now() };
   }
+  const pushDrafts = () => rpc("save_drafts", { p_secret: SYNC.player.secret, p_drafts: draftsDoc() });
+  function saveProgress() {
+    saveLocal();
+    if (!SYNC.player) return;
+    setSync("syncing", "Saving…");
+    clearTimeout(SYNC.pT);
+    SYNC.pT = setTimeout(() => queueWrite(pushProgress), 700);
+  }
   function scheduleDrafts() {
-    if (!SYNC.on) return;
+    if (!SYNC.player) return;
     clearTimeout(SYNC.dT);
-    SYNC.dT = setTimeout(() => { setSync("syncing", "Saving…"); queueWrite(() => SYNC.draftRef.set(draftsDoc())); }, 2500);
+    SYNC.dT = setTimeout(() => { setSync("syncing", "Saving…"); queueWrite(pushDrafts); }, 2500);
   }
   function mergeProgress(data) {
     let changed = false;
-    const sa = (data && data.solvedAt) || {}, at = (data && data.attempts) || {};
+    const sa = (data && data.solvedAt) || {}, at = (data && data.attempts) || {}, ac = (data && data.activity) || {};
     Object.keys(sa).forEach((id) => {
       const v = +sa[id] || 0;
       if (!solved.has(id)) { solvedAt[id] = v; changed = true; }
       else if (v && (!solvedAt[id] || v < solvedAt[id])) { solvedAt[id] = v; changed = true; }
     });
     Object.keys(at).forEach((id) => { const v = +at[id] || 0; if (v > (attempts[id] || 0)) { attempts[id] = v; changed = true; } });
-    const ac = (data && data.activity) || {}, pk = (data && data.peeked) || {};
     Object.keys(ac).forEach((d) => { const v = +ac[d] || 0; if (v > (activity[d] || 0)) { activity[d] = v; changed = true; } });
-    Object.keys(pk).forEach((id) => { if (pk[id] && !peeked[id]) { peeked[id] = 1; changed = true; } });
     return changed;
   }
   function sameProgress(data) {
-    const sa = (data && data.solvedAt) || {}, at = (data && data.attempts) || {};
-    const ac = (data && data.activity) || {}, pk = (data && data.peeked) || {};
+    const sa = (data && data.solvedAt) || {}, at = (data && data.attempts) || {}, ac = (data && data.activity) || {};
     return Object.keys(solvedAt).every((id) => id in sa && (+sa[id] || 0) === (solvedAt[id] || 0)) && Object.keys(attempts).every((id) => (+at[id] || 0) === attempts[id])
-      && Object.keys(activity).every((d) => (+ac[d] || 0) === activity[d]) && Object.keys(peeked).every((id) => !!pk[id]);
+      && Object.keys(activity).every((d) => (+ac[d] || 0) === activity[d]);
+  }
+  // Pull this player's saved progress and drafts, merge with this browser, push back whatever is newer here.
+  async function pull() {
+    const d = await rpc("load_player", { p_secret: SYNC.player.secret });
+    if (!d) { SYNC.player = null; store.set("ps.player", null); setSync("local", "This device", "This browser's player profile no longer exists. Progress is saved here only."); return; }
+    SYNC.pulledAt = Date.now();
+    const pulled = mergeProgress(d.progress);
+    const cd = (d.drafts && d.drafts.code) || {};
+    let draftPulled = false, draftPush = false;
+    Object.keys(cd).forEach((id) => { const loc = getDraft(id); if (!loc.c || (cd[id].t || 0) > loc.t) { store.set("ps.code." + id, cd[id].c); store.set("ps.codeT." + id, cd[id].t || 0); draftPulled = true; } });
+    PROBLEMS.forEach((p) => { const loc = getDraft(p.id); if (loc.c !== null && loc.c !== p.starter && (!cd[p.id] || loc.t > (cd[p.id].t || 0))) draftPush = true; });
+    saveLocal();
+    if (pulled) { renderNav(); renderStatement(); }
+    if (draftPulled && current && document.activeElement !== ta) { ta.value = store.get("ps.code." + current.id, current.starter); syncGutter(); }
+    if (!sameProgress(d.progress)) queueWrite(pushProgress);
+    if (draftPush) queueWrite(pushDrafts);
+    if (sameProgress(d.progress) && !draftPush) setSync("synced", "Synced", SYNCED_MSG);
   }
   async function initSync() {
-    if (!window.claude || typeof window.claude.use !== "function") { setSync("local", "This device", "Progress is saved in this browser. Syncing across devices is coming soon."); return; }
+    if (!SYNC.player) { setSync("local", "This device", "Progress is saved in this browser. Pick a name in your progress panel to join the leaderboard and sync across devices."); return; }
     setSync("syncing", "Connecting…");
-    let db = null, user = null;
-    try { [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]); } catch (e) {}
-    const uid = user ? await user.id() : null;
-    if (!db || !uid) { setSync("local", "This device", "Sign in to claude.ai and open this page there to sync progress across devices. For now it's saved in this browser."); return; }
-    SYNC.db = db; SYNC.user = user; SYNC.uid = uid;
-    SYNC.progRef = db.doc("data/users/" + uid + "/progress");
-    SYNC.draftRef = db.doc("data/users/" + uid + "/drafts");
-    try {
-      const [ps, ds] = await Promise.all([SYNC.progRef.get(), SYNC.draftRef.get()]);
-      SYNC.on = true;
-      const cloud = ps.exists ? ps.data() : null;
-      const pulled = mergeProgress(cloud);
-      const cd = ds.exists ? (ds.data().code || {}) : {};
-      let draftPulled = false, draftPush = false;
-      Object.keys(cd).forEach((id) => { const loc = getDraft(id); if (!loc.c || (cd[id].t || 0) > loc.t) { store.set("ps.code." + id, cd[id].c); store.set("ps.codeT." + id, cd[id].t || 0); draftPulled = true; } });
-      PROBLEMS.forEach((p) => { const loc = getDraft(p.id); if (loc.c !== null && loc.c !== p.starter && (!cd[p.id] || loc.t > (cd[p.id].t || 0))) draftPush = true; });
-      saveLocal();
-      if (pulled) { renderNav(); renderStatement(); }
-      if (draftPulled && current && document.activeElement !== ta) { ta.value = store.get("ps.code." + current.id, current.starter); syncGutter(); }
-      if (!sameProgress(cloud)) queueWrite(() => SYNC.progRef.set(progressDoc()));
-      if (draftPush) queueWrite(() => SYNC.draftRef.set(draftsDoc()));
-      if (solved.size) pushScore();
-      if (sameProgress(cloud) && !draftPush) setSync("synced", "Synced", "Progress and drafts are saved to your claude.ai account and appear on every device where you open this page.");
-      SYNC.progRef.onSnapshot((snap) => {
-        if (!snap.exists || snap.metadata.hasPendingWrites) return;
-        if (mergeProgress(snap.data())) { saveLocal(); renderNav(); renderStatement(); pushScore(); }
-      }, () => {});
-    } catch (e) {
-      SYNC.on = false;
-      setSync("local", "This device", "Couldn't reach your synced progress, so this visit saves to this browser only.");
-    }
+    try { await pull(); } catch (e) { setSync("error", "Not synced", "Couldn't reach the server. Progress is safe in this browser and will sync on your next change."); }
+  }
+  window.addEventListener("focus", () => { if (SYNC.player && Date.now() - SYNC.pulledAt > 30000) pull().catch(() => {}); });
+  async function joinAs(name) {
+    SYNC.player = await rpc("create_player", { p_name: name });
+    store.set("ps.player", SYNC.player);
+    setMe();
+    await pushProgress(); await pushDrafts();
+    setSync("synced", "Synced", SYNCED_MSG);
+  }
+  async function linkCode(code) {
+    code = code.trim().toLowerCase();
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(code)) throw new Error("That doesn't look like a sync code. Copy it again from your other device.");
+    const d = await rpc("load_player", { p_secret: code });
+    if (!d) throw new Error("That code didn't match any player.");
+    SYNC.player = { id: d.id, secret: code, name: d.name };
+    store.set("ps.player", SYNC.player);
+    setMe();
+    await pull();
   }
   let current = null;
   let busy = false;
@@ -7236,7 +7258,7 @@ PROBLEMS.forEach((p) => {
     if (t) { tab = t.dataset.tab; renderStatement(); return; }
     const pg = e.target.closest("[data-go]");
     if (pg && pg.dataset.go) { open(pg.dataset.go); return; }
-    if (e.target.id === "reveal") { revealed = true; if (!solved.has(current.id) && !peeked[current.id]) { peeked[current.id] = 1; saveProgress(); } renderStatement(); return; }
+    if (e.target.id === "reveal") { revealed = true; renderStatement(); return; }
     if (e.target.id === "copy-sol") {
       const fail = () => { $("sol-msg").textContent = "Copy blocked here. Select the code and copy it manually."; };
       try { navigator.clipboard.writeText(current.solution).then(() => { $("sol-msg").textContent = "Copied"; }, fail); } catch (err) { fail(); }
@@ -7558,53 +7580,97 @@ PROBLEMS.forEach((p) => {
   }
 
   // ---------- avatar ----------
-  const ME = { name: "", avatar: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#DDEEEA"/><circle cx="20" cy="15" r="7" fill="#2B7C73"/><path d="M6 36c2-8 8-12 14-12s12 4 14 12z" fill="#2B7C73"/></svg>') };
-  $("avatar-img").src = ME.avatar;
-  async function initAvatar() {
-    if (!window.claude || typeof window.claude.use !== "function") return;
-    try {
-      const user = await window.claude.use("user");
-      if (!user) return;
-      const me = await user.me();
-      if (me.avatarUrl) { ME.avatar = me.avatarUrl; $("avatar-img").src = me.avatarUrl; }
-      ME.name = me.name || "";
-      if (ME.name) $("avatar-btn").title = ME.name + ": your progress";
-    } catch (e) {}
+  const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#DDEEEA"/><circle cx="20" cy="15" r="7" fill="#2B7C73"/><path d="M6 36c2-8 8-12 14-12s12 4 14 12z" fill="#2B7C73"/></svg>');
+  function avatarFor(name) {
+    if (!name) return DEFAULT_AVATAR;
+    let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) % 360;
+    const letters = name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="hsl(${h},45%,86%)"/><text x="20" y="25.5" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="hsl(${h},45%,30%)">${letters.replace(/[<&>]/g, "")}</text></svg>`;
+    return "data:image/svg+xml," + encodeURIComponent(svg);
   }
+  const ME = { name: "", avatar: DEFAULT_AVATAR };
+  function setMe() {
+    ME.name = SYNC.player ? SYNC.player.name : "";
+    ME.avatar = avatarFor(ME.name);
+    $("avatar-img").src = ME.avatar;
+    $("avatar-btn").title = (ME.name ? ME.name + ": " : "") + "your progress";
+  }
+  setMe();
   $("avatar-btn").addEventListener("click", () => openProgress());
 
-  // ---------- leaderboard ----------
+  // ---------- leaderboard and weekly contest ----------
+  const LB = { tab: "all", contest: null, timer: null };
+  const emptyP = (t) => `<p class="empty" style="padding:0">${t}</p>`;
+  function until(ms) {
+    const m = Math.max(0, Math.round(ms / 60000)), d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60);
+    return d ? `${d}d ${h}h` : h ? `${h}h ${m % 60}m` : `${m}m`;
+  }
+  const when = (t) => new Date(t).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const joinPrompt = `<div class="lb-me"><span>Pick a name to appear here. <button type="button" class="btn small" data-act="to-join">Join</button></span></div>`;
+  function row(r, right, sub) {
+    return `<li class="${r.me ? "me" : ""}"><span class="rk">${r.rank}</span><img src="${avatarFor(r.name)}" alt=""><span class="nm"><b>${esc(r.name)}${r.me ? " (you)" : ""}</b><span>${sub}</span></span><span class="pt">${right}</span></li>`;
+  }
+  async function renderAllTime() {
+    const d = await rpc("leaderboard", { p_secret: SYNC.player ? SYNC.player.secret : null });
+    const head = d.me ? `<div class="lb-me"><b>#${d.me.rank}</b><span>of ${d.total} player${d.total === 1 ? "" : "s"}, with ${d.me.score} points.</span></div>`
+      : SYNC.player ? `<div class="lb-me"><span>Solve a problem to join the leaderboard.</span></div>` : joinPrompt;
+    return head + (d.rows.length ? `<ol class="lb">${d.rows.map((r) => row(r, `${r.score}<span>points</span>`, `${r.easy + r.medium + r.hard} solved · ${r.easy} easy, ${r.medium} medium, ${r.hard} hard`)).join("")}</ol>` : emptyP("No scores yet. Be the first."))
+      + `<p class="lb-rules">Points: Easy 10, Medium 20, Hard 40.</p>`;
+  }
+  async function renderContest() {
+    const list = await rpc("list_contests");
+    const now = Date.now(), t = (c, k) => new Date(c[k]).getTime();
+    const c = list.find((c) => t(c, "starts_at") <= now && now <= t(c, "ends_at")) || list.find((c) => t(c, "starts_at") > now) || list[list.length - 1];
+    if (!c) return emptyP("No contests yet. The first weekly contest is coming soon.");
+    LB.contest = c;
+    const live = t(c, "starts_at") <= now && now <= t(c, "ends_at"), soon = t(c, "starts_at") > now;
+    const status = live ? `Live · ends in ${until(t(c, "ends_at") - now)}` : soon ? `Starts ${when(c.starts_at)}` : "Ended · final results";
+    const lower = c.metric === "mae";
+    const metric = lower ? "Mean absolute error: lower is better." : "Accuracy: higher is better.";
+    let board = "";
+    if (!soon) {
+      const b = await rpc("contest_board", { p_contest: c.id, p_secret: SYNC.player ? SYNC.player.secret : null });
+      board = `<div class="dlg-h">${b.final ? "Final standings" : "Live standings"}</div>` + (b.rows.length
+        ? `<ol class="lb">${b.rows.map((r) => row(r, `${r.score}<span>${lower ? "error" : "accuracy"}</span>`, `${r.entries} submission${r.entries === 1 ? "" : "s"}`)).join("")}</ol>`
+        : emptyP("No submissions yet."));
+    }
+    const submit = !live ? "" : SYNC.player
+      ? `<div class="ct-up"><input type="file" id="ct-file" accept=".csv,text/csv"><button type="button" class="btn small" data-act="ct-submit">Submit</button></div><p class="ct-msg" id="ct-msg" role="status"></p>`
+      : joinPrompt;
+    return `<div class="ct"><div class="ct-status ${live ? "live" : ""}">${status}</div><h3>${esc(c.title)}</h3><p>${esc(c.summary)}</p>
+      <p class="ct-meta">${metric} Up to ${c.daily_limit} submissions a day.</p>
+      ${soon ? "" : `<a class="btn small ghost" href="${esc(c.data_url)}" target="_blank" rel="noopener">Download dataset</a>`}
+      ${submit}</div>${board}
+      <p class="lb-rules">Live standings use 30% of the test images. Final ranks use the other 70% and appear when the contest ends, so tuning against the live board won't help. Each player's best live submission is the one that counts.</p>`;
+  }
   async function renderLB() {
     const body = $("lb-body");
-    const rows = SYNC.rows.map((r) => ({ id: r.id, score: Math.max(0, +r.score || 0), solved: Math.max(0, +r.solved || 0), easy: +r.easy || 0, medium: +r.medium || 0, hard: +r.hard || 0, t: +r.updatedAt || 0 }))
-      .filter((r) => r.score > 0 || r.id === SYNC.uid)
-      .sort((a, b) => b.score - a.score || b.solved - a.solved || a.t - b.t);
-    let prof = {};
-    try { if (SYNC.user && rows.length) prof = await SYNC.user.profiles(rows.map((r) => r.id)); } catch (e) {}
-    const meIdx = rows.findIndex((r) => r.id === SYNC.uid);
-    const head = meIdx >= 0 ? `<div class="lb-me"><b>#${meIdx + 1}</b><span>You have ${scoreOf()} points from ${solved.size} problem${solved.size === 1 ? "" : "s"}. ${meIdx === 0 ? "You're in the lead." : (rows[meIdx - 1].score - scoreOf()) + " points to pass the next person."}</span></div>`
-      : (SYNC.noRank ? `<div class="lb-me"><span>Your account can view this leaderboard but can't post a score here.</span></div>` : `<div class="lb-me"><span>Solve a problem to join the leaderboard.</span></div>`);
-    body.innerHTML = head + (rows.length ? `<ol class="lb">${rows.slice(0, 100).map((r, i) => {
-      const p = prof[r.id] || {}; const nm = r.id === SYNC.uid ? (ME.name || p.name || "You") : (p.name || "Someone");
-      const img = p.avatarUrl || ME.avatar;
-      return `<li class="${r.id === SYNC.uid ? "me" : ""}"><span class="rk">${i + 1}</span><img src="${esc(img)}" alt=""><span class="nm"><b>${esc(nm)}${r.id === SYNC.uid ? " (you)" : ""}</b><span>${r.solved} solved · ${r.easy} easy, ${r.medium} medium, ${r.hard} hard</span></span><span class="pt">${r.score}<span>points</span></span></li>`;
-    }).join("")}</ol>` : `<p class="empty" style="padding:0">No scores yet. Be the first.</p>`) +
-      `<p class="lb-rules">Points: Easy 10, Medium 20, Hard 40. Everyone signed in to claude.ai who opens this page appears here once they've solved something.</p>`;
+    const tabs = `<div class="lb-tabs" role="tablist"><button type="button" data-lbtab="all" aria-selected="${LB.tab === "all"}">All-time</button><button type="button" data-lbtab="contest" aria-selected="${LB.tab === "contest"}">Weekly contest</button></div>`;
+    body.innerHTML = tabs + emptyP("Loading…");
+    try { body.innerHTML = tabs + (LB.tab === "all" ? await renderAllTime() : await renderContest()); }
+    catch (e) { body.innerHTML = tabs + emptyP(esc(e.message)); }
   }
-  function openLB() {
-    $("lb-overlay").hidden = false; $("lb-close").focus();
-    if (!SYNC.db) { $("lb-body").innerHTML = `<p class="empty" style="padding:0">The leaderboard is coming soon.</p>`; return; }
-    if (!SYNC.lbUnsub) {
-      $("lb-body").innerHTML = `<p class="empty" style="padding:0">Loading scores…</p>`;
-      SYNC.lbUnsub = SYNC.db.collection("scores").orderBy("score", "desc").limit(100).onSnapshot((snap) => {
-        SYNC.rows = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
-        if (!$("lb-overlay").hidden) renderLB();
-      }, () => { SYNC.lbUnsub = null; $("lb-body").innerHTML = `<p class="empty" style="padding:0">Couldn't load the leaderboard. Try again in a moment.</p>`; });
-    } else renderLB();
+  function openLB() { $("lb-overlay").hidden = false; $("lb-close").focus(); renderLB(); }
+  async function submitContest() {
+    const f = $("ct-file").files[0], msg = $("ct-msg");
+    if (!f) { msg.textContent = "Choose your predictions CSV first."; return; }
+    if (f.size > 1000000) { msg.textContent = "The file is over 1 MB. It should be one short line per test image."; return; }
+    msg.textContent = "Scoring…";
+    try {
+      const r = await rpc("submit_csv", { p_secret: SYNC.player.secret, p_contest: LB.contest.id, p_csv: await f.text() });
+      await renderLB();
+      $("ct-msg").textContent = `Scored ${r.score}. ${r.left} submission${r.left === 1 ? "" : "s"} left today.`;
+    } catch (e) { msg.textContent = e.message; }
   }
   $("lb-btn").addEventListener("click", openLB);
   $("lb-close").addEventListener("click", () => { $("lb-overlay").hidden = true; });
-  $("lb-overlay").addEventListener("click", (e) => { if (e.target === $("lb-overlay")) $("lb-overlay").hidden = true; });
+  $("lb-overlay").addEventListener("click", (e) => {
+    if (e.target === $("lb-overlay")) { $("lb-overlay").hidden = true; return; }
+    const tab = e.target.closest("[data-lbtab]"); if (tab) { LB.tab = tab.dataset.lbtab; renderLB(); return; }
+    const act = e.target.closest("[data-act]"); if (!act) return;
+    if (act.dataset.act === "ct-submit") submitContest();
+    if (act.dataset.act === "to-join") { $("lb-overlay").hidden = true; openProgress(); }
+  });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("lb-overlay").hidden = true; });
 
   // ---------- progress dialog ----------
@@ -7658,9 +7724,12 @@ PROBLEMS.forEach((p) => {
     const mods = MODULES.map((m, i) => { const ps = PROBLEMS.filter((p) => p.module === i); return bar(m, ps.filter((p) => solved.has(p.id)).length, ps.length); }).join("");
     const recent = PROBLEMS.filter((p) => solved.has(p.id)).sort((a, b) => (solvedAt[b.id] || 0) - (solvedAt[a.id] || 0)).slice(0, 8);
     const next = PROBLEMS.find((p) => !solved.has(p.id));
-    const st = $("sync").dataset.state;
     $("prog-body").innerHTML = `
       <div class="me"><img src="${esc(ME.avatar)}" alt=""><div><b></b><span>${done} of ${total} problems solved</span></div></div>
+      ${SYNC.player ? "" : `<div class="join"><b>Join the leaderboard</b><p>Pick a display name. Everyone can see it next to your score. Your progress then syncs to any device where you enter your sync code.</p>
+        <div class="join-row"><input id="join-name" maxlength="24" placeholder="Display name" autocomplete="nickname"><button type="button" class="btn small" data-act="join">Join</button></div>
+        <details><summary>Already joined on another device?</summary><div class="join-row"><input id="join-code" placeholder="Paste your sync code" autocomplete="off" spellcheck="false"><button type="button" class="btn small ghost" data-act="link">Link</button></div></details>
+        <p class="join-msg" id="join-msg" role="status"></p></div>`}
       <div class="stat-row">
         <div class="stat"><b>${done}</b><span>of ${total} solved</span></div>
         <div class="stat"><b>${scoreOf()}</b><span>points of ${maxScore()}</span></div>
@@ -7673,15 +7742,32 @@ PROBLEMS.forEach((p) => {
       <div class="dlg-h">Recently solved</div>
       ${recent.length ? `<ul class="recent">${recent.map((p) => `<li><button type="button" data-open="${p.id}"><span class="status-dot done">${ICON_CHECK}</span><span>${esc(p.title)}</span><em>${ago(solvedAt[p.id])}</em></button></li>`).join("")}</ul>` : `<p class="empty" style="padding:0">Nothing yet. Solve your first problem and it will show up here.</p>`}
       ${next ? `<div class="dlg-h">Up next</div><ul class="recent"><li><button type="button" data-open="${next.id}"><span class="ddot ${next.diff}"></span><span>${esc(next.title)}</span><em>${esc(MODULES[next.module])}</em></button></li></ul>` : ""}
-      <p class="sync-note">${st === "synced" || st === "syncing" ? "Synced to your claude.ai account. Open this page on your phone or another computer, signed in, and you'll see the same progress and code drafts." : "Saved in this browser only. Open the page from claude.ai while signed in to keep progress in sync across your devices."}</p>`;
+      ${SYNC.player ? `<div class="dlg-h">Use on another device</div><p class="sync-note">Open this site on your phone or another computer, choose “Already joined on another device?” in this panel and paste this code. Keep it private: anyone with it can change your progress.</p>
+        <div class="join-row"><code class="code-box" id="sync-code">••••••••-••••-••••-••••-••••••••••••</code><button type="button" class="btn small ghost" data-act="show-code">Show</button><button type="button" class="btn small" data-act="copy-code">Copy</button></div>`
+        : `<p class="sync-note">Saved in this browser only until you join.</p>`}`;
   }
   function openProgress() { renderProgress(); $("prog-body").querySelector(".me b").textContent = ME.name || "You"; $("prog-overlay").hidden = false; $("prog-close").focus(); }
+  async function progressAction(act) {
+    const msg = $("join-msg");
+    try {
+      if (act === "join") { msg.textContent = "Joining…"; await joinAs($("join-name").value); openProgress(); toast("Welcome, " + ME.name + "! You're on the leaderboard."); }
+      if (act === "link") { msg.textContent = "Linking…"; await linkCode($("join-code").value); openProgress(); toast("Linked. Your progress from the other device is here."); }
+      if (act === "show-code") $("sync-code").textContent = SYNC.player.secret;
+      if (act === "copy-code") { await navigator.clipboard.writeText(SYNC.player.secret); toast("Sync code copied"); }
+    } catch (e) { if (msg) msg.textContent = e.message; else toast(e.message); }
+  }
+  $("prog-overlay").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    if (e.target.id === "join-name") progressAction("join");
+    if (e.target.id === "join-code") progressAction("link");
+  });
   function closeProgress() { $("prog-overlay").hidden = true; }
   $("ring-btn").addEventListener("click", openProgress);
   $("prog-close").addEventListener("click", closeProgress);
   $("prog-overlay").addEventListener("click", (e) => {
     if (e.target === $("prog-overlay")) { closeProgress(); return; }
-    const b = e.target.closest("[data-open]"); if (b) { closeProgress(); open(b.dataset.open); }
+    const b = e.target.closest("[data-open]"); if (b) { closeProgress(); open(b.dataset.open); return; }
+    const act = e.target.closest("[data-act]"); if (act) progressAction(act.dataset.act);
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("prog-overlay").hidden) closeProgress(); });
 
@@ -7692,7 +7778,6 @@ PROBLEMS.forEach((p) => {
   window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (PROBLEMS.some((p) => p.id === id) && (!current || current.id !== id)) open(id); });
   setStatus(typeof Sk === "undefined" ? "The Python runtime didn't load. Check your connection and reload." : "Ready");
   initSync();
-  initAvatar();
 })();
 </script>
 
