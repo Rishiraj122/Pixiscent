@@ -1,4 +1,4 @@
--- PixelSmith database. Run once in Supabase → SQL Editor.
+-- Pixiscent database. Run once in Supabase → SQL Editor.
 -- Tables are closed (RLS on, no policies); the site only calls the functions below.
 
 create extension if not exists pgcrypto;

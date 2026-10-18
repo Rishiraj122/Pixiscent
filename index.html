@@ -1,60 +1,61 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
-<title>PixelSmith</title>
+<title>Pixiscent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
 /* Layout: sticky top bar; problem browser card on the left; statement card and workspace side by side, stacking on narrow screens. */
 :root {
-  --bg: #EDF2F0;
+  --bg: #EEF3FA;
   --panel: #FFFFFF;
-  --panel-2: #F5F8F7;
-  --sunk: #E6EDEA;
-  --line: #DAE3E0;
-  --ink: #1B2A29;
-  --muted: #5F7371;
-  --faint: #95A6A3;
-  --accent: #2B7C73;
-  --accent-soft: #DDEEEA;
+  --panel-2: #F5F8FD;
+  --sunk: #E5ECF6;
+  --line: #D9E2EF;
+  --ink: #17233A;
+  --muted: #5A6A84;
+  --faint: #95A3B9;
+  --accent: #3768D4;
+  --accent-soft: #E2EAFB;
   --accent-ink: #FFFFFF;
   --pass: #2E8A58; --pass-soft: #E2F2E8;
-  --fail: #BF5146; --fail-soft: #F8E6E3;
-  --easy: #3A956A; --medium: #BC8226; --hard: #BF5146;
-  --code-bg: #172120; --code-bar: #1D2927; --code-ink: #D6E2DF; --code-dim: #5A6E6B;
-  --shadow: 0 1px 2px rgba(27, 42, 41, .05), 0 10px 30px -18px rgba(27, 42, 41, .25);
-  --topbar: rgba(237, 242, 240, .82);
+  --fail: #C24F45; --fail-soft: #F9E7E4;
+  --easy: #3A956A; --medium: #BC8226; --hard: #C24F45;
+  --code-bg: #141B2A; --code-bar: #1A2233; --code-ink: #DCE3F0; --code-dim: #5B6782; --caret: #8DB4FF; --code-sel: #3768D455;
+  --shadow: 0 1px 2px rgba(23, 35, 58, .05), 0 10px 30px -18px rgba(23, 35, 58, .28);
+  --topbar: rgba(238, 243, 250, .82);
   --radius: 16px;
   --ui: "Manrope", "Segoe UI", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0E1514; --panel: #151E1D; --panel-2: #192322; --sunk: #1D2928; --line: #253331;
-    --ink: #E2EBE9; --muted: #92A5A2; --faint: #61736F;
-    --accent: #6CC2B6; --accent-soft: #1B3632; --accent-ink: #0B1413;
-    --pass: #6CC994; --pass-soft: #163024; --fail: #EC8A7E; --fail-soft: #371E1B;
-    --easy: #6CC994; --medium: #E4B465; --hard: #EC8A7E;
-    --code-bg: #101817; --code-bar: #141E1C; --code-ink: #D6E2DF; --code-dim: #4F625F;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px -18px rgba(0, 0, 0, .6);
-    --topbar: rgba(14, 21, 20, .8);
+    --bg: #0B0A09; --panel: #151311; --panel-2: #1A1815; --sunk: #211D19; --line: #2E2823;
+    --ink: #F2ECE5; --muted: #A99D90; --faint: #6F655A;
+    --accent: #FF8A3D; --accent-soft: #3A2415; --accent-ink: #170C04;
+    --pass: #6CC994; --pass-soft: #16291E; --fail: #F0806F; --fail-soft: #361C17;
+    --easy: #6CC994; --medium: #F2B35E; --hard: #F0806F;
+    --code-bg: #0F0E0C; --code-bar: #171512; --code-ink: #ECE5DC; --code-dim: #5F564C; --caret: #FF9A55; --code-sel: #FF8A3D44;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 12px 32px -18px rgba(0, 0, 0, .7);
+    --topbar: rgba(11, 10, 9, .82);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0E1514; --panel: #151E1D; --panel-2: #192322; --sunk: #1D2928; --line: #253331;
-  --ink: #E2EBE9; --muted: #92A5A2; --faint: #61736F;
-  --accent: #6CC2B6; --accent-soft: #1B3632; --accent-ink: #0B1413;
-  --pass: #6CC994; --pass-soft: #163024; --fail: #EC8A7E; --fail-soft: #371E1B;
-  --easy: #6CC994; --medium: #E4B465; --hard: #EC8A7E;
-  --code-bg: #101817; --code-bar: #141E1C; --code-ink: #D6E2DF; --code-dim: #4F625F;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px -18px rgba(0, 0, 0, .6);
-  --topbar: rgba(14, 21, 20, .8);
+  --bg: #0B0A09; --panel: #151311; --panel-2: #1A1815; --sunk: #211D19; --line: #2E2823;
+    --ink: #F2ECE5; --muted: #A99D90; --faint: #6F655A;
+    --accent: #FF8A3D; --accent-soft: #3A2415; --accent-ink: #170C04;
+    --pass: #6CC994; --pass-soft: #16291E; --fail: #F0806F; --fail-soft: #361C17;
+    --easy: #6CC994; --medium: #F2B35E; --hard: #F0806F;
+    --code-bg: #0F0E0C; --code-bar: #171512; --code-ink: #ECE5DC; --code-dim: #5F564C; --caret: #FF9A55; --code-sel: #FF8A3D44;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 12px 32px -18px rgba(0, 0, 0, .7);
+    --topbar: rgba(11, 10, 9, .82);
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 html, body { background: var(--bg); color: var(--ink); }
+body { margin: 0; }
 body { font: 15px/1.65 var(--ui); -webkit-font-smoothing: antialiased; transition: background-color .3s, color .3s; }
 code, pre { font-family: var(--mono); }
 button, input { font: inherit; color: inherit; }
@@ -66,6 +67,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* ---------- top bar ---------- */
 .topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 15; background: var(--topbar); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
 .topbar .wrap { display: flex; align-items: center; gap: 14px 22px; padding-block: 12px; flex-wrap: wrap; }
+.nav-toggle { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); background: var(--panel); border-radius: 10px; cursor: pointer; color: var(--muted); box-shadow: var(--shadow); transition: color .2s, border-color .2s; }
+.nav-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.nav-toggle svg { width: 17px; height: 17px; }
+.nav-off .nav-toggle { color: var(--accent); }
+.nav-off .shell { grid-template-columns: minmax(0, 1fr); }
+.nav-off details.browser { display: none; }
 .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .logo { display: grid; grid-template-columns: repeat(3, 8px); gap: 2px; flex: none; }
 .logo i { width: 8px; height: 8px; border-radius: 2.5px; background: var(--accent); }
@@ -257,13 +264,22 @@ dl.ideas dd { margin: 2px 0 6px 16px; color: var(--ink); }
 .ed-dots { display: flex; gap: 6px; }
 .ed-dots i { width: 9px; height: 9px; border-radius: 50%; background: #FFFFFF1F; }
 .ed-bar .file { font: 500 12px/1 var(--mono); color: var(--code-ink); background: var(--code-bg); padding: 6px 10px; border-radius: 7px; }
-.ed-bar .hint { font: 11px/1 var(--mono); color: var(--code-dim); margin-left: auto; }
+.ed-actions { margin-left: auto; display: flex; gap: 8px; }
+.ed-bar .ed-run, .ed-bar .ed-submit { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 7px 14px; }
+.ed-bar .ed-submit { background: var(--accent); color: var(--accent-ink); }
+.ed-bar .ed-submit:hover { background: var(--accent); filter: brightness(1.08); }
+.ed-bar button:disabled { opacity: .55; cursor: progress; }
+.ed-actions svg { width: 12px; height: 12px; }
 .ed-bar button { background: #FFFFFF0F; border: 0; color: var(--code-ink); font: 600 11.5px/1 var(--ui); padding: 7px 11px; border-radius: 7px; cursor: pointer; transition: background .2s; }
 .ed-bar button:hover { background: #FFFFFF1F; }
 .ed-body { display: grid; grid-template-columns: auto minmax(0, 1fr); height: 400px; }
 .gutter { margin: 0; padding: 14px 10px 14px 16px; font: 13.5px/1.65 var(--mono); color: var(--code-dim); text-align: right; overflow: hidden; user-select: none; font-variant-numeric: tabular-nums; }
-textarea#code { margin: 0; border: 0; resize: none; outline: none; background: transparent; color: var(--code-ink); font: 13.5px/1.65 var(--mono); padding: 14px 16px 14px 8px; white-space: pre; overflow: auto; tab-size: 4; caret-color: #7FD3C7; width: 100%; height: 100%; }
-textarea#code::selection { background: #6CC2B640; }
+.ed-code { position: relative; min-width: 0; }
+.hl { position: absolute; inset: 0; margin: 0; padding: 14px 16px 14px 8px; font: 13.5px/1.65 var(--mono); white-space: pre; overflow: hidden; tab-size: 4; color: var(--code-ink); pointer-events: none; }
+:is(.hl, .pyc) .k { color: #C792EA; } :is(.hl, .pyc) .s { color: #A5D88A; } :is(.hl, .pyc) .n { color: #F5A962; } :is(.hl, .pyc) .c { color: #7A8394; font-style: italic; }
+:is(.hl, .pyc) .f { color: #7CB7FF; } :is(.hl, .pyc) .b { color: #5FD3C9; } :is(.hl, .pyc) .v { color: #FF8E8E; } :is(.hl, .pyc) .o { color: #89DDFF; }
+textarea#code { position: relative; -webkit-text-fill-color: transparent; margin: 0; border: 0; resize: none; outline: none; background: transparent; color: transparent; font: 13.5px/1.65 var(--mono); padding: 14px 16px 14px 8px; white-space: pre; overflow: auto; tab-size: 4; caret-color: var(--caret); width: 100%; height: 100%; }
+textarea#code::selection { background: var(--code-sel); }
 
 .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .btn { border: 1px solid var(--line); background: var(--panel); padding: 10px 22px; font-weight: 700; font-size: 14px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform .15s, background .2s, border-color .2s, box-shadow .2s; box-shadow: var(--shadow); }
@@ -400,6 +416,18 @@ footer .wrap { padding-block: 4px 30px; display: flex; justify-content: center; 
 .heart { color: var(--fail); }
 footer code { font-size: .9em; }
 
+@media (min-width: 1241px) {
+  .shell { padding-block: 16px; }
+  details.browser { top: calc(var(--top, 80px) + 16px); }
+  .browser-list { max-height: calc(100dvh - var(--top, 80px) - 32px - 128px); }
+  main { height: calc(100dvh - var(--top, 80px) - 32px - 30px); }
+  .browser-list { max-height: calc(100dvh - var(--top, 80px) - 62px - 141px); }
+  footer .wrap { padding-block: 0 10px; height: 30px; align-items: center; }
+  main > .statement, main > .work { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .work { padding-bottom: 4px; }
+  .editor { flex: none; }
+  .ed-body { height: calc((100dvh - var(--top, 80px)) * 0.56); min-height: 300px; }
+}
 @media (max-width: 1240px) {
   main { grid-template-columns: minmax(0, 1fr); }
 }
@@ -416,7 +444,7 @@ footer code { font-size: .9em; }
   .statement h1 { font-size: 25px; }
   .brand small { display: none; }
   .ed-body { height: 340px; }
-  .ed-bar .hint, .ed-dots { display: none; }
+  .ed-dots, .ed-bar .file, .nav-toggle { display: none; }
 }
 @media (max-width: 520px) {
   #lb-btn > span:last-child { display: none; }
@@ -430,9 +458,10 @@ footer code { font-size: .9em; }
 
 <header class="topbar">
   <div class="wrap">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-controls="nav-d" aria-expanded="true" title="Hide problem list"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2"/><path d="M6 3v10"/></svg></button>
     <div class="brand">
       <div class="logo" aria-hidden="true"><i style="opacity:.25"></i><i style="opacity:.55"></i><i style="opacity:.85"></i><i style="opacity:.55"></i><i></i><i style="opacity:.55"></i><i style="opacity:.85"></i><i style="opacity:.55"></i><i style="opacity:.25"></i></div>
-      <div><b>PixelSmith</b><small>Classical computer vision, written from scratch in Python</small></div>
+      <div><b>Pixiscent</b><small>Classical computer vision, written from scratch in Python</small></div>
     </div>
     <div class="top-right">
       <button class="chip-btn" id="potd" type="button"><span class="dot"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.1l-3.9 2.2.9-4.3-3.2-3 4.3-.5z" fill="currentColor"/></svg></span><em>Today</em><span id="potd-title"></span></button>
@@ -475,21 +504,19 @@ footer code { font-size: .9em; }
           <div class="ed-bar">
             <span class="ed-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="file">solution.py</span>
-            <span class="hint">Ctrl+Enter run · Ctrl+Shift+Enter submit</span>
+            <span class="ed-actions">
+              <button class="ed-run" id="run" type="button" title="Run the first two tests (Ctrl+Enter)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg>Run</button>
+              <button class="ed-submit" id="submit" type="button" title="Run the full hidden test suite (Ctrl+Shift+Enter)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Submit</button>
+            </span>
             <button type="button" id="reset">Reset code</button>
           </div>
           <div class="ed-body">
             <pre class="gutter" id="gutter" aria-hidden="true">1</pre>
-            <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Python solution"></textarea>
+            <div class="ed-code"><pre class="hl" id="hl" aria-hidden="true"></pre><textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Python solution"></textarea></div>
           </div>
         </div>
-        <div class="actions">
-          <button class="btn" id="run" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg>Run</button>
-          <button class="btn primary" id="submit" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Submit</button>
-          <span class="status" id="status">Loading Python runtime…</span>
-        </div>
         <div class="panel" id="results-panel">
-          <div class="panel-head"><h4>Tests</h4><span class="count" id="test-count"></span></div>
+          <div class="panel-head"><h4>Tests</h4><span class="status" id="status">Loading Python runtime…</span><span class="count" id="test-count"></span></div>
           <div id="results"><div class="empty">Run checks the first two tests and draws a preview. Submit runs the full hidden suite.</div></div>
         </div>
         <div class="panel" id="preview-panel">
@@ -7241,6 +7268,7 @@ PROBLEMS.forEach((p) => {
         <button type="button" class="prev" data-go="${prev ? prev.id : ""}" ${prev ? "" : "disabled"}><small>← Previous</small><span>${prev ? esc(prev.title) : ""}</span></button>
         <button type="button" class="next" data-go="${next ? next.id : ""}" ${next ? "" : "disabled"}><small>Next →</small><span>${next ? esc(next.title) : ""}</span></button>
       </nav>`;
+    $("statement").querySelectorAll("pre.ex").forEach((el) => { if (/^\s*(def |import |from |for |return |[a-z_]\w* = )/m.test(el.textContent)) { el.classList.add("pyc"); el.innerHTML = highlight(el.textContent).replace(/\n$/, ""); } });
     typesetStatement();
   }
   function typesetStatement() {
@@ -7274,7 +7302,34 @@ PROBLEMS.forEach((p) => {
 
   // ---------- editor ----------
   const ta = $("code");
+  // ---- Python syntax highlighting: a <pre> under a transparent textarea ----
+  const hl = $("hl");
+  const PY_KW = new Set("and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  const PY_CONST = new Set(["True", "False", "None", "self"]);
+  const PY_BUILTIN = new Set("abs all any bool dict enumerate filter float int isinstance len list map max min print range reversed round set sorted str sum tuple zip divmod pow math".split(" "));
+  const TOK = /(#[^\n]*)|("""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?)|\b(\d+\.?\d*(?:[eE][-+]?\d+)?)\b|\b([A-Za-z_]\w*)\b|([-+*/%=<>!&|^~@]+)/g;
+  function highlight(src) {
+    let out = "", last = 0, m, prev = "";
+    TOK.lastIndex = 0;
+    while ((m = TOK.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      const t = esc(m[0]); let cls = "";
+      if (m[1]) cls = "c"; else if (m[2]) cls = "s"; else if (m[3]) cls = "n"; else if (m[5]) cls = "o";
+      else if (m[4]) {
+        const w = m[4];
+        if (PY_KW.has(w)) cls = "k";
+        else if (PY_CONST.has(w)) cls = w === "self" ? "v" : "n";
+        else if (prev === "def" || prev === "class" || /^\s*\(/.test(src.slice(TOK.lastIndex, TOK.lastIndex + 3))) cls = PY_BUILTIN.has(w) ? "b" : "f";
+        else if (PY_BUILTIN.has(w)) cls = "b";
+        prev = w;
+      }
+      out += cls ? `<span class="${cls}">${t}</span>` : t;
+      last = TOK.lastIndex;
+    }
+    return out + esc(src.slice(last)) + "\n";
+  }
   function syncGutter() {
+    hl.innerHTML = highlight(ta.value); hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft;
     const n = ta.value.split("\n").length;
     let s = ""; for (let i = 1; i <= n; i++) s += i + "\n";
     $("gutter").textContent = s;
@@ -7287,7 +7342,7 @@ PROBLEMS.forEach((p) => {
     const id = current.id, v = ta.value;
     saveT = setTimeout(() => setDraft(id, v), 400);
   });
-  ta.addEventListener("scroll", () => { $("gutter").scrollTop = ta.scrollTop; });
+  ta.addEventListener("scroll", () => { $("gutter").scrollTop = ta.scrollTop; hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft; });
   function insert(text) {
     ta.focus();
     let ok = false;
@@ -7580,7 +7635,7 @@ PROBLEMS.forEach((p) => {
   }
 
   // ---------- avatar ----------
-  const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#DDEEEA"/><circle cx="20" cy="15" r="7" fill="#2B7C73"/><path d="M6 36c2-8 8-12 14-12s12 4 14 12z" fill="#2B7C73"/></svg>');
+  const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#E2EAFB"/><circle cx="20" cy="15" r="7" fill="#3768D4"/><path d="M6 36c2-8 8-12 14-12s12 4 14 12z" fill="#3768D4"/></svg>');
   function avatarFor(name) {
     if (!name) return DEFAULT_AVATAR;
     let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) % 360;
@@ -7770,6 +7825,21 @@ PROBLEMS.forEach((p) => {
     const act = e.target.closest("[data-act]"); if (act) progressAction(act.dataset.act);
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("prog-overlay").hidden) closeProgress(); });
+
+  // ---------- problem list toggle ----------
+  function setNav(off) {
+    document.body.classList.toggle("nav-off", off);
+    $("nav-toggle").setAttribute("aria-expanded", String(!off));
+    $("nav-toggle").title = off ? "Show problem list" : "Hide problem list";
+    store.set("ps.navOff", off);
+  }
+  $("nav-toggle").addEventListener("click", () => setNav(!document.body.classList.contains("nav-off")));
+  setNav(!!store.get("ps.navOff", false));
+
+  // ---------- fixed-height panes: measure the top bar ----------
+  const topbar = document.querySelector(".topbar");
+  const setTop = () => document.documentElement.style.setProperty("--top", topbar.offsetHeight + "px");
+  setTop(); window.addEventListener("resize", setTop);
 
   // ---------- boot ----------
   applyTheme();
