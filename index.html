@@ -145,6 +145,23 @@ main > * { min-width: 0; }
 .diff::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .sig { font: 500 12.5px/1.4 var(--mono); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 10px; border-radius: 8px; overflow-wrap: anywhere; }
 .solved-chip { font-size: 12px; font-weight: 700; color: var(--pass); background: var(--pass-soft); padding: 4px 10px; border-radius: 999px; }
+.tab-cm { display: inline-flex; align-items: center; gap: 5px; }
+.tab-cm svg { width: 16px; height: 16px; }
+.tab-n { font-size: 11.5px; font-weight: 700; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 0 7px; line-height: 18px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cm-form { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--panel-2); margin-bottom: 18px; }
+.cm-form textarea { width: 100%; resize: vertical; min-height: 76px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: 14px/1.5 var(--ui); background: var(--panel); color: var(--ink); outline: none; }
+.cm-form textarea:focus { border-color: var(--accent); }
+.cm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+.cm-join { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+.cm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.cm-list li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
+.cm-list img { width: 34px; height: 34px; border-radius: 50%; }
+.cm-h { display: flex; align-items: baseline; gap: 10px; font-size: 13.5px; }
+.cm-h span { color: var(--faint); font-size: 12px; }
+.cm-del { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 0; }
+.cm-del:hover { color: var(--fail); }
+.cm-list p { margin: 3px 0 0; font-size: 14.5px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .tabs { display: inline-flex; gap: 2px; background: var(--sunk); padding: 4px; border-radius: 12px; margin-bottom: 22px; max-width: 100%; overflow-x: auto; }
 .tab { border: 0; background: none; padding: 7px 16px; border-radius: 9px; font-size: 13.5px; font-weight: 600; color: var(--muted); cursor: pointer; white-space: nowrap; transition: background .2s, color .2s; }
 .tab:hover { color: var(--ink); }
@@ -7261,13 +7278,49 @@ PROBLEMS.forEach((p) => {
       `<table class="mat"><tbody>${body.split(";").map((r) => `<tr>${r.split(",").map((v) => `<td>${v.replace("-", "−")}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
   }
   let tab = "problem", revealed = false;
+  // ---------- comments ----------
+  const COMMENTS = { counts: {}, rows: {}, err: "" };
+  const fmtComment = (t) => esc(t).replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  function commentsHTML(id) {
+    const rows = COMMENTS.rows[id];
+    const list = rows === undefined ? `<p class="empty" style="padding:0">${COMMENTS.err ? esc(COMMENTS.err) : "Loading comments…"}</p>`
+      : rows.length ? `<ul class="cm-list">${rows.map((c) => `<li><img src="${avatarFor(c.name)}" alt=""><div><div class="cm-h"><b>${esc(c.name)}</b><span>${ago(new Date(c.at).getTime())}</span>${c.mine ? `<button type="button" class="cm-del" data-cm-del="${c.id}" title="Delete your comment">Delete</button>` : ""}</div><p>${fmtComment(c.body)}</p></div></li>`).join("")}</ul>`
+      : `<p class="empty" style="padding:0">No comments yet. Ask a question or share a tip.</p>`;
+    const form = SYNC.player
+      ? `<div class="cm-form"><textarea id="cm-text" maxlength="2000" rows="3" placeholder="Share a tip, ask a question or explain your approach. Please don't paste full solutions."></textarea><div class="cm-row"><span class="status" id="cm-msg">Wrap code in \`backticks\`.</span><button type="button" class="btn small primary" id="cm-post">Post</button></div></div>`
+      : `<div class="cm-form cm-join"><span>Pick a display name to join the discussion.</span><button type="button" class="btn small" id="cm-join">Join</button></div>`;
+    return form + list;
+  }
+  async function loadComments(id) {
+    COMMENTS.err = "";
+    try { COMMENTS.rows[id] = await rpc("comments_for", { p_problem: id, p_secret: SYNC.player ? SYNC.player.secret : null }); COMMENTS.counts[id] = COMMENTS.rows[id].length; }
+    catch (e) { COMMENTS.err = e.message; }
+    if (current && current.id === id && tab === "comments") {
+      const draft = $("cm-text") ? $("cm-text").value : "";
+      renderStatement(); if (draft && $("cm-text")) $("cm-text").value = draft;
+    }
+  }
+  async function postComment() {
+    const id = current.id, box = $("cm-text"), msg = $("cm-msg");
+    if (!box.value.trim()) { msg.textContent = "Write something first."; return; }
+    msg.textContent = "Posting…"; $("cm-post").disabled = true;
+    try { await rpc("add_comment", { p_secret: SYNC.player.secret, p_problem: id, p_body: box.value }); box.value = ""; await loadComments(id); }
+    catch (e) { msg.textContent = e.message; $("cm-post").disabled = false; }
+  }
+  async function deleteComment(cid) {
+    try { await rpc("delete_comment", { p_secret: SYNC.player.secret, p_id: cid }); await loadComments(current.id); } catch (e) { toast(e.message); }
+  }
+  rpc("comment_counts").then((c) => { COMMENTS.counts = c || {}; if (current) renderStatement(); }).catch(() => {});
   function renderStatement() {
     const p = current, idx = PROBLEMS.indexOf(p);
     const prev = PROBLEMS[idx - 1], next = PROBLEMS[idx + 1];
-    const tabs = [["problem", "Problem"], ["tutorial", "Tutorial"], ["solution", "Solution"]];
+    const nC = COMMENTS.counts[p.id] || 0;
+    const tabs = [["problem", "Problem"], ["tutorial", "Tutorial"], ["solution", "Solution"],
+      ["comments", `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.5h11v7.5h-6.5l-3 2.5V11h-1.5z"/></svg>${nC ? `<span class="tab-n">${nC}</span>` : ""}<span class="sr">Comments</span>`]];
     let body;
     if (tab === "problem") body = `<div class="body">${matrices(p.body)}</div>`;
     else if (tab === "tutorial") body = `<div class="body">${matrices(p.tutorial || "<p>No tutorial yet.</p>")}</div>`;
+    else if (tab === "comments") body = `<div class="body" id="cm-body">${commentsHTML(p.id)}</div>`;
     else if (!revealed) body = `<div class="gate body"><p>The hints in the editor and the Tutorial tab usually get you there. Looking at the solution won't affect your progress.</p><button type="button" class="btn small" id="reveal">Show solution</button></div>`;
     else body = `<div class="body"><pre class="ex" data-label="Reference solution">${esc(p.solution)}</pre>
       <div class="sol-actions"><button type="button" class="btn small" id="copy-sol">Copy</button><button type="button" class="btn small" id="load-sol">Load into editor</button><span class="status" id="sol-msg"></span></div></div>`;
@@ -7275,7 +7328,7 @@ PROBLEMS.forEach((p) => {
       <div class="crumb"><span>Problem ${idx + 1} of ${PROBLEMS.length}</span><i></i><span>${esc(MODULES[p.module])}</span></div>
       <h1>${esc(p.title)}</h1>
       <div class="meta"><span class="diff ${p.diff}">${p.diff}</span><code class="sig">${esc(p.sig)}</code>${solved.has(p.id) ? '<span class="solved-chip">Solved</span>' : ""}</div>
-      <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" class="tab" role="tab" data-tab="${k}" aria-selected="${tab === k}">${l}</button>`).join("")}</div>
+      <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" class="tab${k === "comments" ? " tab-cm" : ""}" role="tab" data-tab="${k}" aria-selected="${tab === k}"${k === "comments" ? ' title="Comments" aria-label="Comments"' : ""}>${l}</button>`).join("")}</div>
       ${body}
       <nav class="pager" aria-label="Previous and next problem">
         <button type="button" class="prev" data-go="${prev ? prev.id : ""}" ${prev ? "" : "disabled"}><small>← Previous</small><span>${prev ? esc(prev.title) : ""}</span></button>
@@ -7296,7 +7349,10 @@ PROBLEMS.forEach((p) => {
   window.__typesetStatement = typesetStatement;
   $("statement").addEventListener("click", (e) => {
     const t = e.target.closest(".tab");
-    if (t) { tab = t.dataset.tab; renderStatement(); return; }
+    if (t) { tab = t.dataset.tab; renderStatement(); if (tab === "comments") loadComments(current.id); return; }
+    if (e.target.id === "cm-post") { postComment(); return; }
+    if (e.target.dataset.cmDel) { deleteComment(+e.target.dataset.cmDel); return; }
+    if (e.target.id === "cm-join") { openProgress(); return; }
     const pg = e.target.closest("[data-go]");
     if (pg && pg.dataset.go) { open(pg.dataset.go); return; }
     if (e.target.id === "reveal") { revealed = true; renderStatement(); return; }
